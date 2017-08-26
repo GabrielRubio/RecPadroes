@@ -63,18 +63,17 @@ k <- 2
 inter <- 10
 
 #seleciona dois pontos aleatorios dentro da amostra
-criaPonto <- function(data, k, d){
-  centros <- matrix(0,k,d)
-  for(i in 1:k){
-    for(j in 1:d){
-      centros[i,j] <- sample(data)[i,j] 
-    }
+doCentralPoints <- function(data, k, d){
+  a <- sample(1:dim(data)[1])
+  centros <- data[a[1],]
+  for(i in 1:(k-1)){
+    centros <- rbind(centros, data[a[i+1],])
   }
   return(centros)
 }
 
 #calcula a media de cada posicao/dimensao de uma matriz
-calcMedia <- function(data){
+doMeans <- function(data){
   d<-dim(data)[2]
   med <- matrix(0,1,d)
   for(i in 1:d){
@@ -83,12 +82,21 @@ calcMedia <- function(data){
   return(med)
 }
 
+#calcula a distancia euclidiana de dois pontos
+dist <- function(pA, pB){
+  tam = length(pA)
+  s = 0
+  for(i in 1:tam){
+    s = s + (pA[i]-pB[i])**2
+  }
+  return(sqrt(s))
+}
+
 #calcula a matriz de distancia 
 
 distMat <- function(vet){
   n = dim(vet)
   m = matrix(Inf,n[1],n[1])
-  
   for(i in 1:n[1]){
     for(j in i:n[1]){
       if(i==j){
@@ -107,11 +115,13 @@ distMat <- function(vet){
 
 
 #acha uma vetor que diz qual ponto eh mais perto de qual ponto
-agrupa <- function(centros, data){
+clust <- function(centros, data){
   l <- dim(data)[1]
   n <- as.integer(dim(centros)[1])
   grupo <- matrix(0,l,1)
   for(i in 1:l){
+    i =1
+    
     A <- data[i,]
     M <- rbind(as.matrix(centros),as.matrix(A))
     D <- distMat(M)
@@ -126,11 +136,15 @@ meuKmean <- function(data, k , inter = 10){
   #achando a dimensao em que esta se trabalhando  
   d <- dim(data)[2]
   
-  centros <- criaPonto(data,k,d)
-  
-  g <- menorDist(centros, data)
+  k=3
+  centros <- doCentralPoints(data,k,d)
+  g <- clust(centros, data)
   
 }
+
+
+plot(data, col = g)
+points(centros, col = "blue")
 
 
 
