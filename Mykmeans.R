@@ -135,16 +135,31 @@ clust <- function(centros, data){
 meuKmean <- function(data, k , inter = 10){
   #achando a dimensao em que esta se trabalhando  
   d <- dim(data)[2]
-  
-  k=3
   centros <- doCentralPoints(data,k,d)
   g <- clust(centros, data)
-  
+  for(i in 1:(inter-1)){
+    for(j in 1:k){
+      clu <- which(g==j)
+      centro <- doMeans(data[clu,])
+      if(j != 1){
+        centrosNovos <- rbind(centro,centrosNovos)
+      }else{
+        centrosNovos <- centro   
+      }
+    }
+    g <- clust(centrosNovos, data)
+  }
+  return(g)
 }
 
+b <- meuKmean(vetJun, 2)
+par(mfrow = c(1, 2))
+plot(vetJun, col = "black")
+points(vetJun, col = b)
 
-plot(data, col = g)
-points(centros, col = "blue")
+plot(vetJun, col = "black")
+points(vetCa, col = "blue")
+
 
 
 
