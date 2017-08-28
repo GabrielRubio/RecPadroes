@@ -40,22 +40,22 @@ q <- 200
 m <- c(38.6,704.1)
 d <- c(30,100)
 
-vetNo <- doSample(q,m,d)
+vetNo2 <- doSample(q,m,d)
 
 q <- 100
 m <- c(45.5,973.8)
 d <- c(30,100)
 
-vetCa <- doSample(q,m,d)
+vetCa2 <- doSample(q,m,d)
 
-vetJun = rbind(vetNo, vetCa)
+vetJun = rbind(vetNo2, vetCa2)
 vetJun <- as.data.frame(vetJun)
 
 plot(vetJun, col = "black")
 points(vetNo, col = "red", add = TRUE)
 points(vetCa, col = "blue", add = TRUE)
 
-###### making  K-means ##############
+###### doing  K-means ##############
 
 # para teste
 data <- vetSep
@@ -115,13 +115,12 @@ distMat <- function(vet){
 
 
 #acha uma vetor que diz qual ponto eh mais perto de qual ponto
+
 clust <- function(centros, data){
   l <- dim(data)[1]
   n <- as.integer(dim(centros)[1])
   grupo <- matrix(0,l,1)
   for(i in 1:l){
-    i =1
-    
     A <- data[i,]
     M <- rbind(as.matrix(centros),as.matrix(A))
     D <- distMat(M)
@@ -131,10 +130,13 @@ clust <- function(centros, data){
   return(grupo)
 }
 
+data <-  vetSep
+k <- 2
 #meu kmeans 
 meuKmean <- function(data, k , inter = 10){
   #achando a dimensao em que esta se trabalhando  
   d <- dim(data)[2]
+  plot(data)
   centros <- doCentralPoints(data,k,d)
   g <- clust(centros, data)
   for(i in 1:(inter-1)){
@@ -147,19 +149,32 @@ meuKmean <- function(data, k , inter = 10){
         centrosNovos <- centro   
       }
     }
+    points(centrosNovos, col = "blue", pch = 20)
+    points(data, col = g)
     g <- clust(centrosNovos, data)
   }
   return(g)
 }
 
+b <- meuKmean(as.data.frame(scale(vetJun)), 2)
 b <- meuKmean(vetJun, 2)
 par(mfrow = c(1, 2))
-plot(vetJun, col = "black")
+plot(vetJun, col = "black", main = "Meu Kmeans")
 points(vetJun, col = b)
+points(centrosNovos, col = "blue", pch=20)
 
-plot(vetJun, col = "black")
+plot(vetJun, col = "black", main = "Real")
+points(vetCa2, col = "blue")
+
+
+b <- meuKmean(vetSep, 2)
+par(mfrow = c(1, 2))
+plot(vetSep, col = b, main = "Meu Kmeans")
+points(vetSep, col = b)
+points(centrosNovos, col = "blue", pch=20)
+
+plot(vetSep, col = "black", main = "Real")
 points(vetCa, col = "blue")
-
 
 
 
