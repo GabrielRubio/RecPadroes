@@ -130,13 +130,17 @@ clust <- function(centros, data){
   return(grupo)
 }
 
-data <-  vetSep
-k <- 2
+#calcula diferenca entre centros
+diffCentro <- function(x, y){
+  c <- dist(x,y)
+  return(c)
+}
+
 #meu kmeans 
 meuKmean <- function(data, k , inter = 10){
   #achando a dimensao em que esta se trabalhando  
   d <- dim(data)[2]
-  plot(data)
+  x11();plot(data)
   centros <- doCentralPoints(data,k,d)
   g <- clust(centros, data)
   for(i in 1:(inter-1)){
@@ -149,8 +153,9 @@ meuKmean <- function(data, k , inter = 10){
         centrosNovos <- centro   
       }
     }
-    points(centrosNovos, col = "blue", pch = 20)
+    points(centrosNovos, col = i, pch = 20)
     points(data, col = g)
+    Sys.sleep(1)
     g <- clust(centrosNovos, data)
   }
   return(g)
